@@ -1,0 +1,17 @@
+<head>
+	<title></title>
+</head>
+<body>
+	{{>chat}}
+</body>
+
+<template name="chat">
+<div>
+	{{#each chat}}
+		<p>{{user}}: {{message}}</p>
+	{{/each}}
+</div>
+<div class="input">
+	<textarea placeholder="Type Message | Press enter to send"></textarea>
+</div>
+</template>
