@@ -1,6 +1,12 @@
 Template.chat.helpers({
     chat: function() {
-        return Chat.find({$or:[{user:Session.get("sessionId")}, {to:Session.get("sessionId")}]});
+    	if(Session.equals("sessionId", undefined)){
+    		return [];
+    	}
+    	else{
+    		return Chat.find({$or:[{user:Session.get("sessionId")}, {to:Session.get("sessionId")}]});
+    	}
+        
     }
 });
 
