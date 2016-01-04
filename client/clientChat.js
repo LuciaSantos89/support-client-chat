@@ -6,27 +6,26 @@ Template.chat.helpers({
     	else{
     		return Chat.find({$or:[{user:Session.get("sessionId")}, {to:Session.get("sessionId")}]});
     	}
-        
     }
 });
 
 Template.chat.events({
+    'submit form':function(event){
+        event.preventDefault();
+        sessionId = event.target.email.value;
+        Session.set("sessionId",sessionId);
+        localStorage.setItem("sessionId", sessionId);
+        Clients.insert({
+            _id: Session.get("sessionId")
+        });
+        $("form.enter-email").attr("hidden", "true");
+        $('.chatting').removeAttr('hidden');               
+            
+    },
+
     'keypress textarea': function(ev) {
         var $textarea = $('.input textarea')
         if (ev.which === 13 && $textarea.val().trim() !== '') {
-            //esto no deberia ir aqui pero no se donde ponerlo :(
-            if (localStorage.getItem("sessionId") === null) {
-                if (Session.equals("sessionId", undefined)) {
-                	Session.set("sessionId", Meteor.connection._lastSessionId);
-                    localStorage.setItem("sessionId", Session.get("sessionId"));
-                    Clients.insert({
-                        _id: Session.get("sessionId")
-                    });                   
-                }
-            } else {
-                Session.set("sessionId", localStorage.getItem("sessionId"));
-            }
-
             ev.stopPropagation();
             Chat.insert({
                 user: Session.get("sessionId").toString(),
@@ -36,3 +35,13 @@ Template.chat.events({
         }
     }
 });
+
+Template.chat.rendered= function(){
+ $(document).ready(function(){
+    if (localStorage.getItem("sessionId") !== null){
+        $("form.enter-email").attr("hidden", "true");
+        $('.chatting').removeAttr('hidden');
+        Session.set("sessionId", localStorage.getItem("sessionId"));
+    }
+ })
+}
